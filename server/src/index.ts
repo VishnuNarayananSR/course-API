@@ -2,7 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import bootcamp from "./routes/api/v1/bootcamps";
 import logger from "./middleware/logger";
-import connectDB from "./db/connect";
+import connectDB from "./db";
 
 // load env variables
 dotenv.config({ path: __dirname + "/../config/.env" });
