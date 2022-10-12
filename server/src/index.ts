@@ -1,8 +1,10 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
 import bootcamp from "./routes/api/v1/bootcamps";
 import logger from "./middleware/logger";
 import connectDB from "./db";
+import { NotFoundError } from "./types/errors";
+import ErrorHandler from "./middleware/error-handler";
 
 // load env variables
 dotenv.config({ path: __dirname + "/../config/.env" });
@@ -16,10 +18,19 @@ const app = express();
 connectDB();
 
 // middlewares
+app.use(express.json());
 app.use(logger);
 
 // routes
 app.use(V1, bootcamp);
+
+// Invalid routes
+app.use("*", (req: Request, res: Response, next: NextFunction) => {
+  next(new NotFoundError());
+});
+
+// Error handling
+app.use(ErrorHandler.handle());
 
 // start listening
 const server = app.listen(PORT, () =>
