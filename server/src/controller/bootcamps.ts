@@ -1,24 +1,71 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
+import bootcamp from "../db/models/bootcamp";
+import asyncHandler from "../middleware/async-handler";
+import { Countable, JSONResponse } from "../types";
+import { NotFoundError } from "../types/errors";
 
-const getBootCamps = (req: Request, res: Response) => {
-  res.send(`Show all bootcamp`);
-};
+const getBootCamps = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await bootcamp.find();
+    const result: JSONResponse<object> & Countable = {
+      success: true,
+      count: data.length,
+      data,
+    };
+    res.status(200).send(result);
+  }
+);
 
-const getBootCamp = (req: Request, res: Response) => {
-  res.send(`Show bootcamp with id: ${req.params.id}`);
-};
+const getBootCamp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result: JSONResponse<object> = {
+      success: true,
+      data: (await bootcamp.findById(req.params.id)) || {},
+    };
+    res.status(200).send(result);
+  }
+);
 
-const createBootCamp = (req: Request, res: Response) => {
-  res.send(`Create a bootcamp`);
-};
+const createBootCamp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result: JSONResponse<object> = {
+      success: true,
+      data: await bootcamp.create(req.body),
+    };
+    res.status(200).send(result);
+  }
+);
 
-const updateBootCamp = (req: Request, res: Response) => {
-  res.send(`Update bootcamp with id: ${req.params.id}`);
-};
+const updateBootCamp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!data) {
+      next(new NotFoundError("No Bootcamps found"));
+    } else {
+      res.status(201).send({
+        success: true,
+        data: data,
+      } as JSONResponse<object>);
+    }
+  }
+);
 
-const deleteBootCamp = (req: Request, res: Response) => {
-  res.send(`Delete bootcamp with id: ${req.params.id}`);
-};
+const deleteBootCamp = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const data = await bootcamp.findByIdAndDelete(req.params.id);
+    if (!data) {
+      next(new NotFoundError("No Bootcamps found"));
+    } else {
+      res.status(200).send({
+        success: true,
+        data: data,
+      } as JSONResponse<object>);
+    }
+  }
+);
 
 export {
   getBootCamp,
