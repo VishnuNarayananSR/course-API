@@ -6,7 +6,24 @@ import { NotFoundError } from "../types/errors";
 
 const getBootCamps = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const data = await bootcamp.find();
+    const urlQuery = req.query;
+    const queryCopy = { ...req.query };
+    const removedFields = ["select"];
+    let filters = {};
+    if (urlQuery) {
+      removedFields.forEach((field) => delete queryCopy[field]);
+      const cleanQuery = JSON.stringify(queryCopy).replace(
+        /\b(in|nin|lte|lt|gte|gt)\b/,
+        (match) => `$${match}`
+      );
+      filters = JSON.parse(cleanQuery);
+    }
+    let query = bootcamp.find(filters);
+    if (urlQuery.select) {
+      const selectFields = (urlQuery.select as string).split(",");
+      query = query.select(selectFields);
+    }
+    const data = await query;
     const result: JSONResponse<object> & Countable = {
       success: true,
       count: data.length,
