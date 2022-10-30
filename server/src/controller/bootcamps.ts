@@ -3,12 +3,13 @@ import bootcamp from "../db/models/bootcamp";
 import asyncHandler from "../middleware/async-handler";
 import { Countable, JSONResponse } from "../types";
 import { NotFoundError } from "../types/errors";
+import paginate from "../middleware/paginate";
 
 const getBootCamps = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const urlQuery = req.query;
     const queryCopy = { ...req.query };
-    const removedFields = ["select"];
+    const removedFields = ["select", "limit", "page"];
     let filters = {};
     if (urlQuery) {
       removedFields.forEach((field) => delete queryCopy[field]);
@@ -23,6 +24,7 @@ const getBootCamps = asyncHandler(
       const selectFields = (urlQuery.select as string).split(",");
       query = query.select(selectFields);
     }
+    query = paginate(req, res, next, query);
     const data = await query;
     const result: JSONResponse<object> & Countable = {
       success: true,
