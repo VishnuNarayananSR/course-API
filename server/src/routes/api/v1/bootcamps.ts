@@ -6,15 +6,19 @@ import {
   getBootCamps,
   updateBootCamp,
 } from "../../../controller/bootcamps";
+import courseRouter from "./courses";
 
-const router = Router();
+const bootcampRouter = Router();
 
-router.route("/bootcamps").get(getBootCamps).post(createBootCamp);
+bootcampRouter.route("/bootcamps").get(getBootCamps).post(createBootCamp);
 
-router
+bootcampRouter
   .route("/bootcamps/:id")
   .get(getBootCamp)
   .put(updateBootCamp)
   .delete(deleteBootCamp);
 
-export default router;
+// re-route to courses
+bootcampRouter.use("/bootcamps/:bootcampId", courseRouter);
+
+export default bootcampRouter;

@@ -1,6 +1,6 @@
 import express, { NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
-import bootcamp from "./routes/api/v1/bootcamps";
+import { bootcampRouter, courseRouter } from "./routes/api/v1";
 import logger from "./middleware/logger";
 import connectDB from "./db";
 import { NotFoundError } from "./types/errors";
@@ -22,7 +22,8 @@ app.use(express.json());
 app.use(logger);
 
 // routes
-app.use(V1, bootcamp);
+app.use(V1, bootcampRouter);
+app.use(V1, courseRouter);
 
 // Invalid routes
 app.use("*", (req: Request, res: Response, next: NextFunction) => {
