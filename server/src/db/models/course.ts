@@ -1,6 +1,9 @@
 import mongoose, { model } from "mongoose";
+import { Course } from "../../types";
+import { NotFoundError } from "../../types/errors";
+import Bootcamp from "./bootcamp";
 
-const CourseSchema = new mongoose.Schema({
+const CourseSchema = new mongoose.Schema<Course>({
   title: {
     type: String,
     trim: true,
@@ -36,6 +39,13 @@ const CourseSchema = new mongoose.Schema({
     ref: "Bootcamp",
     required: true,
   },
+});
+
+CourseSchema.pre("save", async function (next) {
+  const bootcamp = await Bootcamp.findById(this.bootcamp);
+  if (!bootcamp) {
+    next(new NotFoundError(`Invalid id for bootcamp: ${this._id}`));
+  }
 });
 
 export default model("Course", CourseSchema);

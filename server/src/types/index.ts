@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 export type { default as Bootcamp } from "./bootcamp";
+export type { default as Course } from "./course";
 export interface Countable {
   count: number;
 }
