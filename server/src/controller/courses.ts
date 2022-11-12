@@ -14,7 +14,6 @@ const getCourses = asyncHandler(async (req, res, next) => {
   }
   const data = await query;
   const response: JSONResponse<Object> = {
-    success: true,
     data,
   };
   res.status(200).json(response);

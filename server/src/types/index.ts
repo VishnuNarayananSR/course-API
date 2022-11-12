@@ -9,6 +9,6 @@ export type Middleware = (
   res: Response,
   next: NextFunction
 ) => Promise<unknown>;
-type Success<T> = { success: true; data: T };
-type Failure<E> = { success: false; err: E };
+type Success<T> = { data: T };
+type Failure<E> = { err: E };
 export type JSONResponse<T> = Success<T> | Failure<T>;

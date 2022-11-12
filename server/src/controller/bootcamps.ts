@@ -27,7 +27,6 @@ const getBootCamps = asyncHandler(async (req, res, next) => {
   query = paginate(req, res, next, query);
   const data = await query;
   const result: JSONResponse<object> & Countable = {
-    success: true,
     count: data.length,
     data,
   };
@@ -36,7 +35,6 @@ const getBootCamps = asyncHandler(async (req, res, next) => {
 
 const getBootCamp = asyncHandler(async (req, res, next) => {
   const result: JSONResponse<object> = {
-    success: true,
     data: (await bootcamp.findById(req.params.id)) || {},
   };
   res.status(200).send(result);
@@ -44,7 +42,6 @@ const getBootCamp = asyncHandler(async (req, res, next) => {
 
 const createBootCamp = asyncHandler(async (req, res, next) => {
   const result: JSONResponse<object> = {
-    success: true,
     data: await bootcamp.create(req.body),
   };
   res.status(200).send(result);
@@ -59,7 +56,6 @@ const updateBootCamp = asyncHandler(async (req, res, next) => {
     next(new NotFoundError("No Bootcamps found"));
   } else {
     res.status(201).send({
-      success: true,
       data: data,
     } as JSONResponse<object>);
   }
@@ -72,7 +68,6 @@ const deleteBootCamp = asyncHandler(async (req, res, next) => {
   } else {
     data.remove();
     res.status(200).send({
-      success: true,
       data: data,
     } as JSONResponse<object>);
   }

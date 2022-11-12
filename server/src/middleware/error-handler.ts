@@ -10,6 +10,6 @@ export default class ErrorHandler {
         message = `Incorrect identifier. No Resouce found`;
       }
       console.log(err.stack);
-      res.status(statusCode || 500).json({ success: false, err: message });
+      res.status(statusCode || 500).json({ err: message });
     };
 }
