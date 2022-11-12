@@ -64,11 +64,11 @@ const updateBootCamp = asyncHandler(async (req, res, next) => {
 const deleteBootCamp = asyncHandler(async (req, res, next) => {
   const data = await bootcamp.findById(req.params.id);
   if (!data) {
-    next(new NotFoundError("No Bootcamps found"));
+    next(new NotFoundError("Bootcamps to be deleted doesn't exist"));
   } else {
     data.remove();
     res.status(200).send({
-      data: data,
+      data,
     } as JSONResponse<object>);
   }
 });
