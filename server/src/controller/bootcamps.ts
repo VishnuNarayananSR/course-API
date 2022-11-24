@@ -3,6 +3,7 @@ import asyncHandler from "../middleware/async-handler";
 import { Countable, JSONResponse } from "../types";
 import { NotFoundError } from "../types/errors";
 import paginate from "../middleware/paginate";
+import uploadFile from "../util/file";
 
 const getBootCamps = asyncHandler(async (req, res, next) => {
   const urlQuery = req.query;
@@ -73,10 +74,33 @@ const deleteBootCamp = asyncHandler(async (req, res, next) => {
   }
 });
 
+const uploadBootCampPhoto = asyncHandler(async (req, res, next) => {
+  const bootcampId = req.params.id;
+  const fileSize = parseInt(req.headers["content-length"] || "0");
+  const maxUploadSize = parseInt(process.env.MAX_UPLOAD_SIZE_IN_MB || "5");
+  res.set({ "Content-Type": "application/json" });
+  if (fileSize > 5 * 1024000) {
+    res.sendStatus(413);
+  } else if (!req.headers["content-type"]?.startsWith("image")) {
+    res.status(415).send({ message: "Only image files are accepted" });
+  } else {
+    await uploadFile(req, `photo_${bootcampId}.jpg`, (state) => {
+      res.write(JSON.stringify(state));
+    })
+      .then((message) => {
+        res.end(JSON.stringify(message));
+      })
+      .catch((err) => {
+        res.status(400).end(JSON.stringify(err));
+      });
+  }
+});
+
 export {
   getBootCamp,
   getBootCamps,
   createBootCamp,
   updateBootCamp,
   deleteBootCamp,
+  uploadBootCampPhoto,
 };
