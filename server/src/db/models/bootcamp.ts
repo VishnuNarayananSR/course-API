@@ -104,9 +104,9 @@ BootcampSchema.virtual("courses", {
   foreignField: "bootcamp",
 });
 
-BootcampSchema.post("remove", async function () {
-  console.log(`Deleting associated courses of bootcamp id: ${this._id}`);
-  await this.model("Course").deleteMany({ bootcamp: this._id });
+BootcampSchema.post("remove", async function (doc) {
+  console.log(`Deleting associated courses of bootcamp id: ${doc._id}`);
+  await doc.model("Course").deleteMany({ bootcamp: doc._id });
 });
 
 export default model("Bootcamp", BootcampSchema);
